@@ -1,21 +1,28 @@
 package com.example.app.controller;
 
+import com.example.app.dto.RegisterResponse;
 import com.example.app.model.User;
 import com.example.app.repository.UserRepository;
+import com.example.app.service.Register;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
     
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
+    private final Register register;
 
-    public AuthController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthController(Register register) {
+        //this.userRepository = userRepository;
+        this.register = register;
     }
 
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public RegisterResponse registerUser(@RequestBody User user) {
+        //return userRepository.save(user);
+
+        return register.register(user.getName(), user.getEmail(), user.getPassword());
     }
 }
