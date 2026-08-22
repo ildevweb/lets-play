@@ -2,9 +2,10 @@ package com.example.app.controller;
 
 import com.example.app.dto.RegisterResponse;
 import com.example.app.model.User;
-import com.example.app.repository.UserRepository;
 import com.example.app.service.Register;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
 
 
 @RestController
@@ -20,9 +21,17 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public RegisterResponse registerUser(@RequestBody User user) {
-        //return userRepository.save(user);
+    public ResponseEntity<RegisterResponse> registerUser(@RequestBody User user) {
+        //return register.register(user.getName(), user.getEmail(), user.getPassword());
+        
+        RegisterResponse response = register.register(
+            user.getName(),
+            user.getEmail(),
+            user.getPassword()
+        );
 
-        return register.register(user.getName(), user.getEmail(), user.getPassword());
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
     }
 }
