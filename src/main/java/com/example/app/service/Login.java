@@ -13,16 +13,19 @@ public class Login {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     private static final Pattern EMAIL_PATTERN =
         Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     public Login(
         UserRepository userRepository,
-        PasswordEncoder passwordEncoder
+        PasswordEncoder passwordEncoder,
+        JwtService jwtService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public LoginResponse login(
@@ -76,11 +79,15 @@ public class Login {
             );
         }
 
+        // Generate JWT
+        String token = jwtService.generateToken(user);
+
+        
         // Login successful
         return new LoginResponse(
             200,
             "Login successful",
-            user
+            token
         );
     }
 }

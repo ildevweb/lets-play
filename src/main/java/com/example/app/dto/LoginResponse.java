@@ -1,12 +1,10 @@
 package com.example.app.dto;
 
-import com.example.app.model.User;
-
 public class LoginResponse {
 
     private int status;
     private String message;
-    private User user;
+    private String token;
 
     public LoginResponse(
             int status,
@@ -19,11 +17,11 @@ public class LoginResponse {
     public LoginResponse(
             int status,
             String message,
-            User user
+            String token
     ) {
         this.status = status;
         this.message = message;
-        this.user = user;
+        this.token = token;
     }
 
     public int getStatus() {
@@ -34,7 +32,7 @@ public class LoginResponse {
         return message;
     }
 
-    public User getUser() {
-        return user;
+    public String getToken() {
+        return token;
     }
 }
