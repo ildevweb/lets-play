@@ -1,22 +1,32 @@
 package com.example.app.controller;
 
-import org.springframework.web.bind.annotation.*;
-import com.example.app.repository.ProductRepository;
+import com.example.app.dto.ProductServiceResponse;
 import com.example.app.model.Product;
+import com.example.app.service.ProductService;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
 public class ProductsController {
-    
-    private ProductRepository productRepository;
 
-    public ProductsController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    private final ProductService productService;
+
+    public ProductsController(ProductService productService) {
+        this.productService = productService;
     }
 
-    @PostMapping()
-    public Product postProducts(@RequestBody Product product) {
-        Product p = new Product(product.getName(), product.getDescription(), product.getPrice(), product.getUserId());
-        return productRepository.save(p);
+    @PostMapping
+    public ResponseEntity<ProductServiceResponse> postProducts(
+            @RequestBody Product product
+    ) {
+
+        ProductServiceResponse response =
+            productService.createProduct(product);
+
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
     }
 }
