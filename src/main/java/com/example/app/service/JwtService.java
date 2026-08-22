@@ -1,6 +1,7 @@
 package com.example.app.service;
 
 import com.example.app.model.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,8 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // IMPORTANT:
-    // Use a long random secret in a real application.
     private static final String SECRET =
-            "my-super-secret-key-for-lets-play-jwt-2026";
+            "gbrghrghghrghreghreheiihteruithehterterhte";
 
     private static final long EXPIRATION_TIME =
             1000 * 60 * 60; // 1 hour
@@ -28,6 +27,7 @@ public class JwtService {
         );
     }
 
+    // Generate JWT
     public String generateToken(User user) {
 
         return Jwts.builder()
@@ -41,5 +41,33 @@ public class JwtService {
                 )
                 .signWith(key)
                 .compact();
+    }
+
+    // Extract user ID from JWT
+    public String extractUserId(String token) {
+
+        return getClaims(token).getSubject();
+    }
+
+    // Validate JWT
+    public boolean isTokenValid(String token) {
+
+        try {
+            getClaims(token);
+            return true;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // Parse JWT
+    private Claims getClaims(String token) {
+
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }
