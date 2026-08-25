@@ -22,8 +22,7 @@ public class ProductsController {
     @PostMapping
     public ResponseEntity<ProductServiceResponse> postProducts(@RequestBody Product product) {
 
-        ProductServiceResponse response =
-            productService.createProduct(product);
+        ProductServiceResponse response = productService.createProduct(product);
 
         return ResponseEntity
             .status(response.getStatus())
@@ -35,5 +34,15 @@ public class ProductsController {
         List<Product> products = productService.getProducts();
 
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProduct(@PathVariable String id) {
+
+        ProductServiceResponse response = productService.getProduct(id);
+
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
     }
 }

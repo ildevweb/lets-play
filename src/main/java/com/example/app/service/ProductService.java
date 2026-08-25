@@ -5,6 +5,7 @@ import com.example.app.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import com.example.app.dto.ProductServiceResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -125,4 +126,23 @@ public class ProductService {
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
+
+    public ProductServiceResponse getProduct(String id) {
+
+        Optional<Product> product = productRepository.findById(id);
+
+        if (product.isEmpty()) {
+                return new ProductServiceResponse(
+                404,
+                "Product not found",
+                null
+                );
+        }
+
+        return new ProductServiceResponse(
+                200,
+                "Product found",
+                product.get()
+        );
+   }
 }
