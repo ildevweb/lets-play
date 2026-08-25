@@ -145,4 +145,29 @@ public class ProductService {
                 product.get()
         );
    }
+
+   public ProductServiceResponse putProduct(String id, Product request) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isEmpty()) {
+                return new ProductServiceResponse(
+                404,
+                "Product not found",
+                null
+                );
+        }
+
+        Product product = existingProduct.get();
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setUserId(request.getUserId());
+
+        return new ProductServiceResponse(
+                200,
+                "Product found",
+                productRepository.save(product)
+        );
+   }
 }

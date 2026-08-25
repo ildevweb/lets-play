@@ -45,4 +45,14 @@ public class ProductsController {
             .status(response.getStatus())
             .body(response);
     }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> putProduct(@PathVariable String id, @RequestBody Product product) {
+        ProductServiceResponse response = productService.putProduct(id, product);
+
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
+    }
 }
