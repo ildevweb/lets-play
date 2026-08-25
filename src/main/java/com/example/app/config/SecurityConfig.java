@@ -3,7 +3,7 @@ package com.example.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,11 +39,17 @@ public class SecurityConfig {
 
             .authorizeHttpRequests(auth -> auth
 
-                // Public endpoints
+                // Public authentication endpoints
                 .requestMatchers(
                     "/auth/login",
                     "/auth/register"
                 ).permitAll()
+
+                // Products
+                .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/products/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/products/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/products/**").authenticated()
 
                 // Everything else requires JWT
                 .anyRequest().authenticated()

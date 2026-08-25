@@ -4,6 +4,7 @@ import com.example.app.model.Product;
 import com.example.app.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import com.example.app.dto.ProductServiceResponse;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -119,5 +120,9 @@ public class ProductService {
                         "Failed to create product"
                 );
         }
+    }
+
+    public List<Product> getProducts() {
+        return productRepository.findAll();
     }
 }
