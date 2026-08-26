@@ -28,8 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     public JwtAuthenticationFilter(
-            JwtService jwtService,
-            UserRepository userRepository
+        JwtService jwtService,
+        UserRepository userRepository
     ) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
@@ -38,9 +38,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 List<GrantedAuthority> authorities =
                         Collections.singletonList(
                                 new SimpleGrantedAuthority(
-                                        "ROLE_" + user.getRole()
+                                        "ROLE_" + user.getRole().toUpperCase()
                                 )
                         );
 

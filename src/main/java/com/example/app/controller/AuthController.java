@@ -25,12 +25,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> registerUser(@RequestBody User user) {
-        //return register.register(user.getName(), user.getEmail(), user.getPassword());
         
         RegisterResponse response = register.register(
             user.getName(),
             user.getEmail(),
-            user.getPassword()
+            user.getPassword(),
+            user.getRole()
         );
 
         return ResponseEntity

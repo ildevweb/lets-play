@@ -2,8 +2,6 @@ package com.example.app.service;
 
 import com.example.app.model.Product;
 import com.example.app.repository.ProductRepository;
-import com.example.app.repository.UserRepository;
-import com.example.app.model.User;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,11 +14,9 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
-    public ProductService(ProductRepository productRepository, UserRepository userRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
     }
 
     public ProductServiceResponse createProduct(Product product) {
@@ -171,6 +167,10 @@ public class ProductService {
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
+
+        System.out.println("USER: " + authentication.getName());
+        System.out.println("AUTHORITIES: " + authentication.getAuthorities());
+
 
         String loggedUserId = authentication.getName();
 
