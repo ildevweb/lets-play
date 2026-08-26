@@ -2,8 +2,13 @@ package com.example.app.service;
 
 import com.example.app.model.Product;
 import com.example.app.repository.ProductRepository;
+import com.example.app.repository.UserRepository;
+import com.example.app.model.User;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.example.app.dto.ProductServiceResponse;
+import org.springframework.security.core.Authentication;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +16,11 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     public ProductServiceResponse createProduct(Product product) {
@@ -147,27 +154,56 @@ public class ProductService {
    }
 
    public ProductServiceResponse putProduct(String id, Product request) {
+
         Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isEmpty()) {
                 return new ProductServiceResponse(
-                404,
-                "Product not found",
-                null
+                        404,
+                        "Product not found",
+                        null
                 );
         }
 
         Product product = existingProduct.get();
 
-        product.setName(request.getName());
-        product.setDescription(request.getDescription());
-        product.setPrice(request.getPrice());
-        product.setUserId(request.getUserId());
+        String ownerId = product.getUserId();
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedUserId = authentication.getName();
+
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN")
+                );
+
+        boolean isOwner = ownerId.equals(loggedUserId);
+
+        System.out.println("this is if its an admin :");
+        System.out.println(isAdmin);
+
+
+        if (isAdmin || isOwner) {
+
+                product.setName(request.getName());
+                product.setDescription(request.getDescription());
+                product.setPrice(request.getPrice());
+
+                return new ProductServiceResponse(
+                        200,
+                        "Product updated successfully",
+                        productRepository.save(product)
+                );
+        }
 
         return new ProductServiceResponse(
-                200,
-                "Product found",
-                productRepository.save(product)
+                403,
+                "User has no access to this product",
+                null
         );
    }
 }
