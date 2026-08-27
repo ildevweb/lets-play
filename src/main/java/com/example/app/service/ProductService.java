@@ -206,4 +206,47 @@ public class ProductService {
                 null
         );
    }
+
+   public ProductServiceResponse deleteProduct(String id) {
+        Optional<Product> existingProduct = productRepository.findById(id);
+
+        if (existingProduct.isEmpty()) {
+                return new ProductServiceResponse(
+                        404,
+                        "Product not found",
+                        null
+                );
+        }
+
+        Product product = existingProduct.get();
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String loggedUserId = authentication.getName();
+
+        boolean isAdmin = authentication.getAuthorities()
+                .stream()
+                .anyMatch(authority ->
+                        authority.getAuthority().equals("ROLE_ADMIN")
+                );
+
+        boolean isOwner = product.getUserId().equals(loggedUserId);
+
+        if (!isAdmin && !isOwner) {
+                return new ProductServiceResponse(
+                        403,
+                        "User has no access to this product",
+                        null
+                );
+        }
+
+        productRepository.delete(product);
+
+        return new ProductServiceResponse(
+                200,
+                "Product deleted successfully",
+                product
+        );
+    }
 }

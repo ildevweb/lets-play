@@ -55,4 +55,15 @@ public class ProductsController {
             .status(response.getStatus())
             .body(response);
     }
+
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable String id) {
+        System.out.println("enter here");
+        ProductServiceResponse response = productService.deleteProduct(id);
+
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
+    }
 }
