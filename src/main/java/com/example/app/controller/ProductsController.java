@@ -59,7 +59,6 @@ public class ProductsController {
     
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable String id) {
-        System.out.println("enter here");
         ProductServiceResponse response = productService.deleteProduct(id);
 
         return ResponseEntity

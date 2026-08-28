@@ -51,6 +51,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/products/**").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/products/**").authenticated()
 
+                //Users
+                .requestMatchers("/users/**").hasRole("ADMIN")
+
+
                 // Everything else requires JWT
                 .anyRequest().authenticated()
             )
