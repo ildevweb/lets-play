@@ -1,6 +1,7 @@
 package com.example.app.controller;
 
 import com.example.app.dto.UserServiceResponse;
+import com.example.app.model.Product;
 import com.example.app.model.User;
 import com.example.app.service.UserService;
 
@@ -35,4 +36,10 @@ public class UsersController {
             .status(response.getStatus())
             .body(response);
     }
+
+    @PostMapping
+    public ResponseEntity<UserServiceResponse> postUser(@RequestBody User user) {
+        return userService.createUser(user);
+    }
+
 }
