@@ -49,4 +49,13 @@ public class UsersController {
         .status(response.getStatus())
         .body(response);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<UserServiceResponse> deleteUser(@PathVariable String id) {
+        UserServiceResponse response = userService.deleteUser(id);
+
+        return ResponseEntity
+            .status(response.getStatus())
+            .body(response);
+    }
 }

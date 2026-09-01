@@ -104,4 +104,24 @@ public class UserService {
             "User updated successfully",
             userRepository.save(user));
     }
+
+
+    public UserServiceResponse deleteUser(String id) {
+
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            return new UserServiceResponse(
+                404,
+                "User not found",
+                null
+            );
+        }
+
+        userRepository.delete(user.get());
+        
+        return new UserServiceResponse(
+            200,
+            "User successfully deleted");
+    }
 }
