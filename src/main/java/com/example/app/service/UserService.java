@@ -78,4 +78,30 @@ public class UserService {
                         savedUser
                 ));
     }
+
+
+    public UserServiceResponse putUser(String id, User request) {
+
+        Optional<User> existingUser = userRepository.findById(id);
+
+        if (existingUser.isEmpty()) {
+            return new UserServiceResponse(
+                404,
+                "User not found",
+                null);
+        }
+
+        User user = existingUser.get();
+        
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+
+        return new UserServiceResponse(
+            200,
+            "User updated successfully",
+            userRepository.save(user));
+    }
 }

@@ -1,7 +1,6 @@
 package com.example.app.controller;
 
 import com.example.app.dto.UserServiceResponse;
-import com.example.app.model.Product;
 import com.example.app.model.User;
 import com.example.app.service.UserService;
 
@@ -42,4 +41,12 @@ public class UsersController {
         return userService.createUser(user);
     }
 
+    @PutMapping("{id}")
+    public ResponseEntity<UserServiceResponse> putUser(@PathVariable String id, @RequestBody User user) {
+        UserServiceResponse response = userService.putUser(id, user);
+
+        return ResponseEntity
+        .status(response.getStatus())
+        .body(response);
+    }
 }

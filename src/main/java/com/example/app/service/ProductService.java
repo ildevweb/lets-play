@@ -168,10 +168,6 @@ public class ProductService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println("USER: " + authentication.getName());
-        System.out.println("AUTHORITIES: " + authentication.getAuthorities());
-
-
         String loggedUserId = authentication.getName();
 
 
@@ -182,10 +178,6 @@ public class ProductService {
                 );
 
         boolean isOwner = ownerId.equals(loggedUserId);
-
-        System.out.println("this is if its an admin :");
-        System.out.println(isAdmin);
-
 
         if (isAdmin || isOwner) {
 
