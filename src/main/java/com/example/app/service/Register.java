@@ -28,8 +28,7 @@ public class Register {
         public RegisterResponse register(
                 String username,
                 String email,
-                String password,
-                String role
+                String password
         ) {
 
         // Username
@@ -111,14 +110,6 @@ public class Register {
                 );
         }
 
-        //check role
-        if (!role.equals("user") && !role.equals("admin")) {
-                return new RegisterResponse(
-                        400,
-                        "Role should be User or Admin"
-                );
-        }
-
         // Create user
         User user = new User();
 
@@ -130,7 +121,7 @@ public class Register {
                 passwordEncoder.encode(password)
         );
 
-        user.setRole(role);
+        user.setRole(userRepository.count() == 0 ? "admin" : "user");
 
         // Save
         User savedUser = userRepository.save(user);

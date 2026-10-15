@@ -29,8 +29,7 @@ public class AuthController {
         RegisterResponse response = register.register(
             user.getName(),
             user.getEmail(),
-            user.getPassword(),
-            user.getRole()
+            user.getPassword()
         );
 
         return ResponseEntity

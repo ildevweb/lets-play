@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 "User not found with username: " + username
             );
         }
-        
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.get().getId())
                 .password(user.get().getPassword())
