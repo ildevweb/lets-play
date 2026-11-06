@@ -4,13 +4,17 @@ import com.example.app.dto.UserServiceResponse;
 import com.example.app.model.User;
 import com.example.app.service.UserService;
 
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/users")
+@RolesAllowed("ADMIN")
 public class UsersController {
 
     private final UserService userService;
@@ -28,6 +32,7 @@ public class UsersController {
 
 
     @GetMapping("/{id}")
+    @PostAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserServiceResponse> getUser(@PathVariable String id) {
         UserServiceResponse response = userService.getUser(id);
 
@@ -37,12 +42,15 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<UserServiceResponse> postUser(@RequestBody User user) {
+    public ResponseEntity<UserServiceResponse> postUser(@Valid @RequestBody User user) {
         return userService.createUser(user);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<UserServiceResponse> putUser(@PathVariable String id, @RequestBody User user) {
+    @PutMapping("/{id}")
+    public ResponseEntity<UserServiceResponse> putUser(
+        @PathVariable String id,
+        @Valid @RequestBody User user
+    ) {
         UserServiceResponse response = userService.putUser(id, user);
 
         return ResponseEntity
@@ -50,7 +58,7 @@ public class UsersController {
         .body(response);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<UserServiceResponse> deleteUser(@PathVariable String id) {
         UserServiceResponse response = userService.deleteUser(id);
 

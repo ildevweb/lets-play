@@ -4,7 +4,10 @@ import com.example.app.dto.ProductServiceResponse;
 import com.example.app.model.Product;
 import com.example.app.service.ProductService;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +23,10 @@ public class ProductsController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductServiceResponse> postProducts(@RequestBody Product product) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ProductServiceResponse> postProducts(
+        @Valid @RequestBody Product product
+    ) {
 
         ProductServiceResponse response = productService.createProduct(product);
 
@@ -30,6 +36,7 @@ public class ProductsController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<List<Product>> getProducts() {
         List<Product> products = productService.getProducts();
 
@@ -37,6 +44,7 @@ public class ProductsController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<?> getProduct(@PathVariable String id) {
 
         ProductServiceResponse response = productService.getProduct(id);
@@ -48,7 +56,11 @@ public class ProductsController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> putProduct(@PathVariable String id, @RequestBody Product product) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> putProduct(
+        @PathVariable String id,
+        @Valid @RequestBody Product product
+    ) {
         ProductServiceResponse response = productService.putProduct(id, product);
 
         return ResponseEntity
@@ -58,6 +70,7 @@ public class ProductsController {
 
     
     @DeleteMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> deleteProduct(@PathVariable String id) {
         ProductServiceResponse response = productService.deleteProduct(id);
 

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
+import java.util.Locale;
 
 @Service
 public class Register {
@@ -63,7 +64,7 @@ public class Register {
                 );
         }
 
-        email = email.trim().toLowerCase();
+        email = email.trim().toLowerCase(Locale.ROOT);
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
                 return new RegisterResponse(
@@ -87,10 +88,10 @@ public class Register {
                 );
         }
 
-        if (password.length() > 100) {
+        if (password.length() > 72) {
                 return new RegisterResponse(
                         400,
-                        "Password cannot contain more than 100 characters"
+                        "Password cannot contain more than 72 characters"
                 );
         }
 

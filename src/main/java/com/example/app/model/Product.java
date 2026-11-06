@@ -1,6 +1,11 @@
 package com.example.app.model;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "products")
@@ -9,12 +14,22 @@ public class Product {
     @Id
     private String id;
 
+    @Field("name")
+    @NotBlank
+    @Size(min = 2, max = 100)
     private String name;
 
+    @Field("description")
+    @NotBlank
+    @Size(max = 1000)
     private String description;
 
+    @Field("price")
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     private Double price;
 
+    @Field("userId")
     private String userId;
 
     public Product() {

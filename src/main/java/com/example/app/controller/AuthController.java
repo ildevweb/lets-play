@@ -6,6 +6,8 @@ import com.example.app.dto.LoginResponse;
 import com.example.app.model.User;
 import com.example.app.service.Register;
 import com.example.app.service.Login;
+import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
@@ -24,7 +26,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> registerUser(@RequestBody User user) {
+    @PermitAll
+    public ResponseEntity<RegisterResponse> registerUser(@Valid @RequestBody User user) {
         
         RegisterResponse response = register.register(
             user.getName(),
@@ -38,7 +41,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
+    @PermitAll
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = login.login(
             request.getEmail(),
             request.getPassword()

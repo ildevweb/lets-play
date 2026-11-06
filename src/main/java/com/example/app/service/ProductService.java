@@ -89,41 +89,28 @@ public class ProductService {
                 );
         }
 
-        // User ID
-        if (product.getUserId() == null ||
-                product.getUserId().trim().isEmpty()) {
-
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
                 return new ProductServiceResponse(
-                        400,
-                        "User ID is required"
+                        401,
+                        "Authentication is required"
                 );
         }
 
-        try {
+        Product newProduct = new Product(
+                name,
+                description,
+                product.getPrice(),
+                authentication.getName()
+        );
 
-                Product newProduct = new Product(
-                        name,
-                        description,
-                        product.getPrice(),
-                        product.getUserId().trim()
-                );
-
-                Product savedProduct =
-                        productRepository.save(newProduct);
-
-                return new ProductServiceResponse(
-                        201,
-                        "Product created successfully",
-                        savedProduct
-                );
-
-        } catch (Exception e) {
-
-                return new ProductServiceResponse(
-                        500,
-                        "Failed to create product"
-                );
-        }
+        Product savedProduct = productRepository.save(newProduct);
+        return new ProductServiceResponse(
+                201,
+                "Product created successfully",
+                savedProduct
+        );
     }
 
     public List<Product> getProducts() {
@@ -151,6 +138,10 @@ public class ProductService {
 
    public ProductServiceResponse putProduct(String id, Product request) {
 
+        if (request == null) {
+                return new ProductServiceResponse(400, "Product data is required");
+        }
+
         Optional<Product> existingProduct = productRepository.findById(id);
 
         if (existingProduct.isEmpty()) {
@@ -167,6 +158,9 @@ public class ProductService {
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+                return new ProductServiceResponse(401, "Authentication is required");
+        }
 
         String loggedUserId = authentication.getName();
 
@@ -177,7 +171,7 @@ public class ProductService {
                         authority.getAuthority().equals("ROLE_ADMIN")
                 );
 
-        boolean isOwner = ownerId.equals(loggedUserId);
+        boolean isOwner = java.util.Objects.equals(ownerId, loggedUserId);
 
         if (isAdmin || isOwner) {
 
@@ -214,6 +208,9 @@ public class ProductService {
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+                return new ProductServiceResponse(401, "Authentication is required");
+        }
 
         String loggedUserId = authentication.getName();
 
@@ -223,7 +220,7 @@ public class ProductService {
                         authority.getAuthority().equals("ROLE_ADMIN")
                 );
 
-        boolean isOwner = product.getUserId().equals(loggedUserId);
+        boolean isOwner = java.util.Objects.equals(product.getUserId(), loggedUserId);
 
         if (!isAdmin && !isOwner) {
                 return new ProductServiceResponse(

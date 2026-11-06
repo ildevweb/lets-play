@@ -115,3 +115,39 @@ Evaluation criteria include:
 - [MongoDB Official Documentation](https://www.mongodb.com/docs/)
 - [REST API Design Guidelines – GitHub Docs](https://docs.github.com/en/rest?apiVersion=2022-11-28)
 - [Baeldung: Error Handling in Spring Boot](https://www.baeldung.com/exception-handling-for-rest-with-spring)
+
+## Running the application
+
+Requirements: Java 17+, MongoDB, and the included Maven wrapper.
+
+The application connects to `mongodb://localhost:27017/lets-play` by default
+(Spring Boot 4 property: `spring.mongodb.uri`).
+Set a private JWT signing key before starting the application; it must contain
+at least 32 UTF-8 bytes:
+
+```powershell
+$env:JWT_SECRET = "<use a securely generated secret of at least 32 bytes>"
+.\mvnw.cmd spring-boot:run
+```
+
+For a non-default MongoDB URI, set `MONGODB_URI`. The API listens on port 8080.
+The first registered account is an administrator; subsequent registrations are
+regular users. Use `POST /auth/register` and `POST /auth/login`. Send the returned
+JWT as `Authorization: Bearer <token>` on protected requests.
+
+`GET /products` and `GET /products/{id}` are public. Authenticated users can
+create products and can update or delete only their own products; administrators
+can manage any product. User CRUD endpoints are administrator-only. Product
+ownership is taken from the authenticated account, not from the submitted
+`userId`.
+
+Validation errors return `400`, missing records return `404`, duplicate records
+return `409`, and unexpected server errors return a generic `500` response.
+Login requests are limited to 10 attempts per minute per remote IP address
+within each application instance.
+
+Cross-origin requests are denied unless their origins are explicitly listed in
+`CORS_ALLOWED_ORIGINS` as a comma-separated allowlist. Wildcard origins are
+rejected. The application does not configure TLS certificates: deploy it behind
+a reverse proxy or ingress that enforces HTTPS, and set secure transport between
+that proxy and the application where required.

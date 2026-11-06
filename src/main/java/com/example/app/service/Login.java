@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
+import java.util.Locale;
 
 @Service
 public class Login {
@@ -41,7 +42,7 @@ public class Login {
             );
         }
 
-        email = email.trim().toLowerCase();
+        email = email.trim().toLowerCase(Locale.ROOT);
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             return new LoginResponse(

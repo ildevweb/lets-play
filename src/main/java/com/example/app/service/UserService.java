@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -45,8 +46,9 @@ public class UserService {
 
 
     public ResponseEntity<UserServiceResponse> createUser(User user) {
+        user.setName(user.getName().trim());
+        user.setEmail(user.getEmail().trim().toLowerCase(Locale.ROOT));
 
-        // Check if username already exists
         if (userRepository.findByName(user.getName()).isPresent()) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
@@ -57,14 +59,20 @@ public class UserService {
                     ));
         }
 
-        // Encrypt password
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new UserServiceResponse(409, "email already exists", null));
+        }
+
         user.setPassword(
                 passwordEncoder.encode(user.getPassword())
         );
 
-        // Set default role
         if (user.getRole() == null || user.getRole().isBlank()) {
             user.setRole("USER");
+        } else {
+            user.setRole(user.getRole().toUpperCase(Locale.ROOT));
         }
 
         // Save user
@@ -92,12 +100,24 @@ public class UserService {
         }
 
         User user = existingUser.get();
-        
+        request.setName(request.getName().trim());
+        request.setEmail(request.getEmail().trim().toLowerCase(Locale.ROOT));
+
+        if (!user.getName().equals(request.getName())
+            && userRepository.findByName(request.getName()).isPresent()) {
+            return new UserServiceResponse(409, "username already exists", null);
+        }
+        if (!user.getEmail().equalsIgnoreCase(request.getEmail())
+            && userRepository.existsByEmail(request.getEmail())) {
+            return new UserServiceResponse(409, "email already exists", null);
+        }
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
+        if (request.getRole() != null) {
+            user.setRole(request.getRole().toUpperCase(Locale.ROOT));
+        }
 
         return new UserServiceResponse(
             200,
